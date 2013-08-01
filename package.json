@@ -1,0 +1,25 @@
+{
+  "name": "demos",
+  "version": "0.0.1",
+  "versionify": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "browserify-middleware": "~1.16.0",
+    "code-mirror": "3.11.01",
+    "express": "~3.3.1",
+    "jade": "~0.34.1",
+    "transform": "~1.0.3",
+    "uglify-js": "https://github.com/ForbesLindesay/UglifyJS2/archive/76cb391c6e47b99ad1cfc31c54a8345ad3ba81c2.tar.gz"
+  },
+  "devDependencies": {
+    "stop": "~2.1.1",
+    "mandate": "~1.0.0",
+    "versionify": "~1.0.1",
+    "rimraf": "~2.2.0"
+  },
+  "scripts": {
+    "prerelease": "npm install && versionify && rimraf out",
+    "release": "stop && mandate",
+    "postrelease": "rimraf out"
+  }
+}

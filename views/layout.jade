@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    meta(charset='utf8')
+    block title
+      title Demos
+    link(href='/static/' + version + '/style.css', rel='stylesheet')
+    //- for `stop` we must add background.png as an href
+    meta(name='background-image', href='/static/' + version + '/background.png')
+  body
+    #wrap
+      div(style='margin-bottom: 5em')
+        block content
+      #push
+    #footer-wrapper
+      footer
+        p These demonstrations took a lot of time to build.  If you find them useful, if they save you a few minutes, please donate some money to their upkeep via 
+          a(href='https://www.gittip.com/ForbesLindesay/') GitTip
+          | .
+        p
+          | Developed by 
+          a(href='http://www.forbeslindesay.co.uk') @ForbesLindesay
+          |  run by 
+          a(href='http://www.jepso.com') JEPSO
+        p By using this site you consent to the use of cookies
+    block scripts

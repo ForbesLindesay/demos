@@ -1,0 +1,61 @@
+extends ./layout.jade
+
+block title
+  title UglifyJS Demo
+  style
+    #output pre {
+      height: 25em;
+      overflow: auto;
+    }
+    #key {
+      margin-top: 1em;
+      background: white;
+      padding: 1em;
+      color: black;
+    }
+    #key ul {
+      padding-left: 40px;
+    }
+    #key li, #key p {
+      color: black;
+    }
+    .property {
+      min-width: 15em;
+      display: inline-block;
+    }
+    .description {
+    }
+    .expand-button {
+      padding: 0;
+      margin: 0;
+      background: none;
+      border: none;
+      color: black;
+    }
+    .expand-button:hover {
+      background: none;
+      color: gray;
+    }
+
+block content
+  .row
+    .large-12.columns
+      h1 UglifyJS Demo
+      p This demo uses UglifyJS version #{versions['uglify-js']}
+  .row
+    .large-12.columns
+      h2 Input
+      #input
+  .row
+    .large-12.columns
+      h2 Output
+      #output
+      #key
+        p Key:
+        ul
+          li <code>\S</code> in the type means the property is only available after calling <code>ast.figure_out_scope()</code>
+          li <code>*</code> in the type means the property is an <code>array</code> of that type
+          li <code>?</code> in the type means the property is an <code>optional</code> property and may instead be <code>null</code>
+
+block scripts
+  script(src='/static/' + version + '/uglify.js')
