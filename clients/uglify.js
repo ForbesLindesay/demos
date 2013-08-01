@@ -75,47 +75,36 @@ function formatAST(ast) {
           parent = parent.BASE
         }
       }
-      var prop = document.createElement('span')
-      prop.setAttribute('class', 'property')
-
-      var propDescription = document.createElement('span')
-      propDescription.setAttribute('class', 'description')
-      propDescription.appendChild(formatDocs(
-        ast[docs.PROPS[i]] instanceof UglifyJS.Dictionary ? propdoc.replace(/^\[Object/, '[Dictionary') : propdoc))
-
-      var propName = document.createElement('span')
-      propName.setAttribute('class', 'cm-property')
-      propName.appendChild(document.createTextNode(docs.PROPS[i]))
-      prop.appendChild(propName)
-
-      prop.appendChild(document.createTextNode(': '))
-
-
-      if ((Array.isArray(ast[docs.PROPS[i]]) && ast[docs.PROPS[i]].length != 0) || (!Array.isArray(ast[docs.PROPS[i]]) && ast[docs.PROPS[i]] && typeof ast[docs.PROPS[i]] == 'object')) {
-        var expand = document.createElement('button')
-        expand.setAttribute('class', 'expand-button')
-        expand.appendChild(document.createTextNode('(+)'))
-        prop.appendChild(expand)
-        var row = document.createElement('div')
-        row.appendChild(prop)
-        row.appendChild(propDescription)
-        buf.appendChild(row)
-        var formattedContainer = document.createElement('div')
-        formattedContainer.setAttribute('style', 'padding-left: 1em;display: none;')
-        buf.appendChild(formattedContainer)
-        makeExpander(expand, formattedContainer, ast[docs.PROPS[i]])
-      } else {
-        prop.appendChild(formatAST(ast[docs.PROPS[i]]))
-        buf.appendChild(prop)
-        buf.appendChild(propDescription)
-        buf.appendChild(document.createTextNode('\n'))
-      }
+      buf.appendChild(formatProperty(docs.PROPS[i], ast[docs.PROPS[i]], propdoc))
     }
     outer.appendChild(buf)
     outer.appendChild(document.createTextNode('}'))
     return outer
   } else if (ast && typeof ast === 'object' && ast instanceof UglifyJS.Dictionary) {
-    return document.createTextNode(util.inspect(ast._values))
+    if (ast.size() === 0) return document.createTextNode('{}')
+    var outer = document.createDocumentFragment()
+    outer.appendChild(document.createTextNode('{\n'))
+    var buf = document.createElement('div')
+    buf.setAttribute('style', 'padding-left: 1em')
+
+    ast.each(function (value, key) {
+      buf.appendChild(formatProperty(key, value))
+    })
+    outer.appendChild(buf)
+    outer.appendChild(document.createTextNode('}'))
+    return outer
+  } else if (ast && typeof ast === 'object' && ast instanceof UglifyJS.SymbolDef) {
+    var outer = document.createDocumentFragment()
+    outer.appendChild(document.createTextNode('{\n'))
+    var buf = document.createElement('div')
+    buf.setAttribute('style', 'padding-left: 1em')
+
+    Object.keys(ast).forEach(function (key) {
+      buf.appendChild(formatProperty(key, ast[key]))
+    })
+    outer.appendChild(buf)
+    outer.appendChild(document.createTextNode('}'))
+    return outer
   } else if (['string', 'number'].indexOf(typeof ast) != -1) {
     var elem = document.createElement('span')
     elem.setAttribute('class', 'cm-' + (typeof ast))
@@ -127,8 +116,57 @@ function formatAST(ast) {
     elem.appendChild(document.createTextNode(util.inspect(ast)))
     return elem
   } else {
+    console.dir(ast && ast.constructor && ast.constructor.name)
     return document.createTextNode(util.inspect(ast))
   }
+}
+function formatProperty(name, node, description) {
+  var buf = document.createDocumentFragment()
+
+  if (!description && typeof node === 'object' && node) {
+    if (node instanceof UglifyJS.Dictionary) {
+      description = '[Dictionary]'
+    } else if (node instanceof UglifyJS.SymbolDef) {
+      description = '[SymbolDef]'
+    }
+  } else if (typeof node === 'object' && node && node instanceof UglifyJS.Dictionary) {
+    description = description.replace(/^\[Object/, '[Dictionary')
+  }
+
+  var prop = document.createElement('span')
+  prop.setAttribute('class', 'property')
+
+  var propName = document.createElement('span')
+  propName.setAttribute('class', 'cm-property')
+  propName.appendChild(document.createTextNode(name))
+  prop.appendChild(propName)
+  prop.appendChild(document.createTextNode(': '))
+
+  var propDescription = document.createElement('span')
+  propDescription.setAttribute('class', 'description')
+  propDescription.appendChild(formatDocs(description))
+
+  if ((Array.isArray(node) && node.length != 0) ||
+      (!Array.isArray(node) && node && typeof node == 'object' && (!(node instanceof UglifyJS.Dictionary) || node.size()))) {
+    var expand = document.createElement('button')
+    expand.setAttribute('class', 'expand-button')
+    expand.appendChild(document.createTextNode('(+)'))
+    prop.appendChild(expand)
+    var row = document.createElement('div')
+    row.appendChild(prop)
+    row.appendChild(propDescription)
+    buf.appendChild(row)
+    var formattedContainer = document.createElement('div')
+    formattedContainer.setAttribute('style', 'padding-left: 1em;display: none;')
+    buf.appendChild(formattedContainer)
+    makeExpander(expand, formattedContainer, node)
+  } else {
+    prop.appendChild(formatAST(node))
+    buf.appendChild(prop)
+    buf.appendChild(propDescription)
+    buf.appendChild(document.createTextNode('\n'))
+  }
+  return buf
 }
 function formatDocs(doc) {
   return document.createTextNode(doc || '')
