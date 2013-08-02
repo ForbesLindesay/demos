@@ -1,6 +1,7 @@
 var util = require('util')
 var CodeMirror = require('code-mirror/mode/javascript')
 var UglifyJS = require('uglify-js')
+var ObjectExplorer = require('object-explorer')
 
 var input = new CodeMirror(document.getElementById('input'), {
   mode: 'javascript',
@@ -11,8 +12,6 @@ var input = new CodeMirror(document.getElementById('input'), {
 
 var output = document.getElementById('output')
 
-input.on('change', update)
-update()
 function update() {
   var s;
   try {
@@ -33,37 +32,30 @@ function outputHTML(text) {
 
 function outputAST(ast) {
   ast.figure_out_scope()
-  outputHTML('')
-  output.getElementsByTagName('pre')[0].appendChild(formatAST(ast))
+  output.innerHTML = ''
+  var oe = new ASTExplorer(ast)
+  oe.appendTo(output)
 }
-function formatAST(ast) {
-  if (Array.isArray(ast)) {
-    if (ast.length === 0) return document.createTextNode('[]')
-    ast = ast.map(function (node) { return formatAST(node, '') })
-    var outer = document.createDocumentFragment()
-    outer.appendChild(document.createTextNode('['))
-    var buf = document.createElement('div')
-    buf.setAttribute('style', 'padding-left: 1em')
-    ast.forEach(function (node) { buf.appendChild(node) })
-    outer.appendChild(buf)
-    outer.appendChild(document.createTextNode(']'))
-    return outer
-  } else if (typeof ast === 'object' && ast && typeof ast.TYPE === 'string') {
-    var docs = UglifyJS['AST_' + ast.TYPE]
-    var outer = document.createDocumentFragment()
-    outer.appendChild(document.createTextNode('{\n'))
-    var buf = document.createElement('div')
-    buf.setAttribute('style', 'padding-left: 1em')
-    var prop = document.createElement('span')
-    prop.setAttribute('class', 'property')
-    prop.appendChild(document.createTextNode('TYPE: '))
-    prop.appendChild(formatAST(ast.TYPE))
-    buf.appendChild(prop)
-    var desc = document.createElement('span')
-    desc.setAttribute('class', 'description')
-    desc.appendChild(document.createTextNode(escape(docs.documentation)))
-    buf.appendChild(desc)
-    buf.appendChild(document.createTextNode('\n'))
+
+function ASTExplorer(ast) {
+  ObjectExplorer.call(this, ast)
+}
+ASTExplorer.prototype = Object.create(ObjectExplorer.prototype)
+ASTExplorer.prototype.constructor = ASTExplorer
+
+ASTExplorer.prototype.isInline = function (obj) {
+  if (obj instanceof UglifyJS.Dictionary && obj.size() === 0) {
+    return true
+  }
+  return ObjectExplorer.prototype.isInline.call(this, obj)
+}
+ASTExplorer.prototype.getNodeForObject = function (obj) {
+  if (typeof obj.TYPE === 'string') {
+    var docs = UglifyJS['AST_' + obj.TYPE]
+    var outer = document.createElement('div')
+    outer.appendChild(document.createTextNode('{'))
+
+    outer.appendChild(this.getNodeForProperty('TYPE', obj.TYPE, docs.documentation))
 
     for (var i = 0; i < docs.PROPS.length; i++) {
       var parent = docs
@@ -75,119 +67,62 @@ function formatAST(ast) {
           parent = parent.BASE
         }
       }
-      buf.appendChild(formatProperty(docs.PROPS[i], ast[docs.PROPS[i]], propdoc))
+      outer.appendChild(this.getNodeForProperty(docs.PROPS[i], obj[docs.PROPS[i]], propdoc))
     }
-    outer.appendChild(buf)
+
     outer.appendChild(document.createTextNode('}'))
     return outer
-  } else if (ast && typeof ast === 'object' && ast instanceof UglifyJS.Dictionary) {
-    if (ast.size() === 0) return document.createTextNode('{}')
-    var outer = document.createDocumentFragment()
-    outer.appendChild(document.createTextNode('{\n'))
-    var buf = document.createElement('div')
-    buf.setAttribute('style', 'padding-left: 1em')
+  } else if (obj instanceof UglifyJS.Dictionary) {
+    if (obj.size() === 0) return document.createTextNode('{}')
+    var outer = document.createElement('div')
 
-    ast.each(function (value, key) {
-      buf.appendChild(formatProperty(key, value))
+    var dictionary = document.createElement('div')
+    dictionary.setAttribute('class', 'dictionary-label')
+    /*var dictionaryLab = document.createElement('strong')
+    dictionaryLab.innerText = 'Dictionary'*/
+    dictionary.appendChild(document.createTextNode('Dictionary'))
+    var methods = {
+      set: ['key', 'val'],
+      add: ['key', 'val'],
+      get: ['key'],
+      del: ['key'],
+      has: ['key'],
+      each: ['func(val, key)'],
+      map: ['func(val, key)']
+    }
+    Object.keys(methods).forEach(function (method, i) {
+      if (i === 0) dictionary.appendChild(document.createTextNode('  '))
+      else dictionary.appendChild(document.createTextNode(', '))
+      var fn = document.createElement('code')
+      fn.appendChild(document.createTextNode(method + '('))
+      methods[method].forEach(function (param, i) {
+        if (i != 0) fn.appendChild(document.createTextNode(', '))
+        var p = document.createElement('span')
+        p.setAttribute('class', 'atom')
+        p.appendChild(document.createTextNode(param))
+        fn.appendChild(p)
+      })
+      fn.appendChild(document.createTextNode(')'))
+      dictionary.appendChild(fn)
     })
-    outer.appendChild(buf)
-    outer.appendChild(document.createTextNode('}'))
-    return outer
-  } else if (ast && typeof ast === 'object' && ast instanceof UglifyJS.SymbolDef) {
-    var outer = document.createDocumentFragment()
-    outer.appendChild(document.createTextNode('{\n'))
-    var buf = document.createElement('div')
-    buf.setAttribute('style', 'padding-left: 1em')
+    outer.appendChild(dictionary)
 
-    Object.keys(ast).forEach(function (key) {
-      buf.appendChild(formatProperty(key, ast[key]))
+
+    outer.appendChild(document.createTextNode('{'))
+
+    var self = this
+    obj.each(function (val, key) {
+      outer.appendChild(self.getNodeForProperty(key, val))
     })
-    outer.appendChild(buf)
+
     outer.appendChild(document.createTextNode('}'))
     return outer
-  } else if (['string', 'number'].indexOf(typeof ast) != -1) {
-    var elem = document.createElement('span')
-    elem.setAttribute('class', 'cm-' + (typeof ast))
-    elem.appendChild(document.createTextNode(util.inspect(ast)))
-    return elem
-  } else if (typeof ast === 'boolean' || ast === null || ast === undefined) {
-    var elem = document.createElement('span')
-    elem.setAttribute('class', 'cm-atom')
-    elem.appendChild(document.createTextNode(util.inspect(ast)))
-    return elem
   } else {
-    console.dir(ast && ast.constructor && ast.constructor.name)
-    return document.createTextNode(util.inspect(ast))
+    return ObjectExplorer.prototype.getNodeForObject.call(this, obj)
   }
 }
-function formatProperty(name, node, description) {
-  var buf = document.createDocumentFragment()
 
-  if (!description && typeof node === 'object' && node) {
-    if (node instanceof UglifyJS.Dictionary) {
-      description = '[Dictionary]'
-    } else if (node instanceof UglifyJS.SymbolDef) {
-      description = '[SymbolDef]'
-    }
-  } else if (typeof node === 'object' && node && node instanceof UglifyJS.Dictionary) {
-    description = description.replace(/^\[Object/, '[Dictionary')
-  }
 
-  var prop = document.createElement('span')
-  prop.setAttribute('class', 'property')
 
-  var propName = document.createElement('span')
-  propName.setAttribute('class', 'cm-property')
-  propName.appendChild(document.createTextNode(name))
-  prop.appendChild(propName)
-  prop.appendChild(document.createTextNode(': '))
-
-  var propDescription = document.createElement('span')
-  propDescription.setAttribute('class', 'description')
-  propDescription.appendChild(formatDocs(description))
-
-  if ((Array.isArray(node) && node.length != 0) ||
-      (!Array.isArray(node) && node && typeof node == 'object' && (!(node instanceof UglifyJS.Dictionary) || node.size()))) {
-    var expand = document.createElement('button')
-    expand.setAttribute('class', 'expand-button')
-    expand.appendChild(document.createTextNode('(+)'))
-    prop.appendChild(expand)
-    var row = document.createElement('div')
-    row.appendChild(prop)
-    row.appendChild(propDescription)
-    buf.appendChild(row)
-    var formattedContainer = document.createElement('div')
-    formattedContainer.setAttribute('style', 'padding-left: 1em;display: none;')
-    buf.appendChild(formattedContainer)
-    makeExpander(expand, formattedContainer, node)
-  } else {
-    prop.appendChild(formatAST(node))
-    buf.appendChild(prop)
-    buf.appendChild(propDescription)
-    buf.appendChild(document.createTextNode('\n'))
-  }
-  return buf
-}
-function formatDocs(doc) {
-  return document.createTextNode(doc || '')
-}
-
-function makeExpander(button, expandable, ast) {
-  var expanded = false
-  var created = false
-  button.addEventListener('click', function () {
-    if (!created) {
-      expandable.appendChild(formatAST(ast))
-      created = true
-    }
-    if (expanded) {
-      expanded = false
-      button.innerHTML = '(+)'
-      expandable.style.display = 'none'
-    } else {
-      expanded = true
-      button.innerHTML = '(-)'
-      expandable.style.display = 'block'
-    }
-  }, false)
-}
+input.on('change', update)
+update()

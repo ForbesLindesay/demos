@@ -49,6 +49,24 @@ footer {
   display: block;
 }
 
+.object-explorer {
+  font-size: 1.1em;
+}
+.dictionary-label {
+  font-size: 1em;
+}
+.object-explorer {
+  background: #EEE8D5;
+  color: #657B83;
+}
+.object-explorer .expand-button {
+  color: #657B83;
+}
+.object-explorer .expand-button:hover {
+  background: none;
+  color: black;
+}
+
 /* foundation */
 
 *,
