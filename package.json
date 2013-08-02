@@ -9,8 +9,11 @@
     "express": "~3.3.1",
     "jade": "~0.34.1",
     "transform": "~1.0.3",
+    "object-explorer": "0.0.2",
     "uglify-js": "https://github.com/ForbesLindesay/UglifyJS2/archive/76cb391c6e47b99ad1cfc31c54a8345ad3ba81c2.tar.gz",
-    "object-explorer": "0.0.2"
+    "htmlparser2": "3.1.5",
+    "rfile": "~1.0.0",
+    "rfileify": "~1.2.0"
   },
   "devDependencies": {
     "stop": "~2.1.1",

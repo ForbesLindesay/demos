@@ -1,6 +1,6 @@
 /* Custom Styles */
 
-.CodeMirror {
+html .CodeMirror {
   height: auto;
   margin: 5px;
 }
@@ -61,6 +61,7 @@ footer {
 }
 .object-explorer .expand-button {
   color: #657B83;
+  font-weight: normal;
 }
 .object-explorer .expand-button:hover {
   background: none;

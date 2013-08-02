@@ -1,0 +1,26 @@
+extends ./layout.jade
+
+block title
+  title HTML Parser
+
+block content
+  .row
+    .large-12.columns
+      h1 HTML Parser Demo
+      p This demo uses <a href="https://github.com/fb55/htmlparser2">htmlparser2</a> version #{versions['htmlparser2']}
+  .row
+    .large-6.columns
+      h2 Input
+      #input
+    .large-6.columns
+      h2 Output
+      #output
+  .row
+    .large-6.columns
+      +ForbesLindesay()
+    .large-6.columns
+      p htmlparser2 Library maintained by <a href="http://www.feedic.com/">Felix Böhm</a>
+      p If you find anything that doesn't result in the correct output, open an issue at <a href="https://github.com/fb55/htmlparser2/issues" target="_blank">fb55/htmlparser2/issues</a>
+      p The htmlparser2 source code can be viewed at <a href="https://github.com/fb55/htmlparser2">fb55/htmlparser2</a>
+block scripts
+  script(src='/static/' + version + '/htmlparser2.js')
