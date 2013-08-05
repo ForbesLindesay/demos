@@ -1,4 +1,3 @@
-var util = require('util')
 var CodeMirror = require('code-mirror/mode/javascript')
 var UglifyJS = require('uglify-js')
 var ObjectExplorer = require('object-explorer')

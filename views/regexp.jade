@@ -1,0 +1,27 @@
+extends ./layout.jade
+
+block title
+  title Regexp Demo
+  style.
+    #output pre {
+      height: 25em;
+      overflow: auto;
+    }
+    
+
+block content
+  .row
+    .large-12.columns
+      h1 Regexp Demo
+      p This demo uses <a href="https://github.com/ForbesLindesay/regexp">regexp</a> version #{versions['regexp']}
+  .row
+    .large-12.columns
+      h2 Input
+      input#input(type='text',value='(\\s*)((?:<|>)?=?)\\s*([v=\\s]*([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-?((?:[0-9]+|\\d*[a-zA-Z-][a-zA-Z0-9-]*)(?:\\.(?:[0-9]+|\\d*[a-zA-Z-][a-zA-Z0-9-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?|[v=\\s]*(0|[1-9]\\d*|x|X|\\*)(?:\\.(0|[1-9]\\d*|x|X|\\*)(?:\\.(0|[1-9]\\d*|x|X|\\*)(?:((?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][a-zA-Z0-9-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][a-zA-Z0-9-]*))*))))?)?)?)')
+  .row
+    .large-12.columns
+      h2 Output
+      #output
+
+block scripts
+  script(src='/static/' + version + '/regexp.js')

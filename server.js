@@ -29,6 +29,9 @@ app.get('/static/' + version + '/uglify.js', browserify('./clients/uglify.js'))
 app.get('/htmlparser2', jade('./views/htmlparser2.jade'))
 app.get('/static/' + version + '/htmlparser2.js', browserify('./clients/htmlparser2.js'))
 
+app.get('/regexp', jade('./views/regexp.jade'))
+app.get('/static/' + version + '/regexp.js', browserify('./clients/regexp.js'))
+
 app.get('/static/' + version + '/style.css', function (req, res) {
   res.type('css')
   var css = fs.readFileSync(__dirname + '/style/style.css', 'utf8')
