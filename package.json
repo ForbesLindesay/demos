@@ -14,7 +14,7 @@
     "rfileify": "~1.2.0",
     "uglify-js": "https://github.com/ForbesLindesay/UglifyJS2/archive/76cb391c6e47b99ad1cfc31c54a8345ad3ba81c2.tar.gz",
     "htmlparser2": "3.1.6",
-    "regexp": "0.0.4"
+    "regexp": "0.0.5"
   },
   "devDependencies": {
     "stop": "~2.1.1",
