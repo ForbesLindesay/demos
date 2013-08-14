@@ -1049,7 +1049,8 @@ p {
   font-weight: normal;
   font-size: 1em;
   line-height: 1.6;
-  margin-bottom: 1.25em;
+  margin-bottom: 0.5125em;
+  margin-top: 0.5125em;
   text-rendering: optimizeLegibility; }
   p aside {
     font-size: 0.875em;

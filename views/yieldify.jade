@@ -1,0 +1,23 @@
+extends ./layout.jade
+
+block title
+  title Yieldify Demo
+
+block content
+  .row
+    .large-12.columns
+      h1 Yieldify Demo
+      p This demo uses <a href="https://github.com/ForbesLindesay/yieldify">yieldify</a> version #{versions['yieldify']}
+  .row
+    .large-6.columns
+      h2 Input
+      #input
+    .large-6.columns
+      h2 Output
+      #output
+  .row
+    .large-12.columns
+      +ForbesLindesay('yieldify')
+
+block scripts
+  script(src='/static/' + version + '/yieldify.js')

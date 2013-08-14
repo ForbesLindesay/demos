@@ -1,6 +1,12 @@
 doctype html
-mixin ForbesLindesay()
-  p <a href="http://www.forbeslindesay.co.uk">Forbes Lindesay</a> produced this demo in his free time and released it in the hope that other developers would find it useful.
+mixin ForbesLindesay(name)
+  p
+    a(href="http://www.forbeslindesay.co.uk") Forbes Lindesay
+    |  produced
+    if name
+      a(href='https://github.com/ForbesLindesay/' + name)  #{name}
+      |  and
+    |  this demo in his free time and released it in the hope that other developers would find it useful.
 html
   head
     meta(charset='utf8')

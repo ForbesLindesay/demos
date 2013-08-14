@@ -32,6 +32,9 @@ app.get('/static/' + version + '/htmlparser2.js', browserify('./clients/htmlpars
 app.get('/regexp', jade('./views/regexp.jade'))
 app.get('/static/' + version + '/regexp.js', browserify('./clients/regexp.js'))
 
+app.get('/yieldify', jade('./views/yieldify.jade'))
+app.get('/static/' + version + '/yieldify.js', browserify('./clients/yieldify.js'))
+
 app.get('/static/' + version + '/style.css', function (req, res) {
   res.type('css')
   var css = fs.readFileSync(__dirname + '/style/style.css', 'utf8')
