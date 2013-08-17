@@ -16,7 +16,7 @@
     "htmlparser2": "3.1.6",
     "regexp": "1.0.0",
     "yieldify": "0.0.3",
-    "toml": "1.0.0"
+    "toml": "1.0.1"
   },
   "devDependencies": {
     "stop": "~2.1.1",
