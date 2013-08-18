@@ -14,9 +14,7 @@ var output = document.getElementById('output')
 function update() {
   var s;
   try {
-    s = toml.parse(input.getValue().split('\n').map(function (res) {
-      return res.trim()
-    }).join('\n'))
+    s = toml.parse(input.getValue())
   } catch (ex) {
     return outputHTML(escape(ex.stack || ex.message || ex))
   }
