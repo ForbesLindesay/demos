@@ -6,10 +6,37 @@ var input = new CodeMirror(document.getElementById('input'), {
   mode: 'javascript',
   viewportMargin: Infinity,
   theme: 'solarized light editable',
-  value: 'var x = 40 + 2'
+  value: 'var x = 40 + 2\nfunction foo (left, right) {return left + right}'
 })
 
 var output = document.getElementById('output')
+
+var outputPretty = new CodeMirror(document.getElementById('output-pretty'), {
+  mode: 'javascript',
+  viewportMargin: Infinity,
+  readonly: true,
+  theme: 'solarized light readonly'
+})
+var outputUgly = new CodeMirror(document.getElementById('output-ugly'), {
+  mode: 'javascript',
+  viewportMargin: Infinity,
+  readonly: true,
+  theme: 'solarized light readonly'
+})
+
+;(function () {
+  var jses = document.getElementsByClassName('javascript')
+  for (var i = 0; i < jses.length; i++) {
+    var val = jses[i].textContent
+    new CodeMirror(jses[i], {
+      mode: 'javascript',
+      viewportMargin: Infinity,
+      readonly: true,
+      value: val,
+      theme: 'solarized light readonly'
+    })
+  }
+}())
 
 function update() {
   var s;
@@ -19,6 +46,12 @@ function update() {
     return outputHTML(escape(ex.stack || ex.message || ex))
   }
   outputAST(s)
+  outputPretty.setValue(s.print_to_string({
+    beautify: {'indent-level': 2}
+  }))
+  outputUgly.setValue(UglifyJS.minify(input.getValue(), {
+    fromString: true
+  }).code)
 }
 
 function escape(text) {
@@ -27,6 +60,8 @@ function escape(text) {
 }
 function outputHTML(text) {
   output.innerHTML = '<pre class="cm-s-solarized">' + text + '</pre>'
+  outputPretty.setValue('')
+  outputUgly.setValue('')
 }
 
 function outputAST(ast) {

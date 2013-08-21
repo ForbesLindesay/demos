@@ -7,16 +7,16 @@ block title
       height: 25em;
       overflow: auto;
     }
-    #key {
+    .key {
       margin-top: 1em;
       background: white;
       padding: 1em;
       color: black;
     }
-    #key ul {
+    .key ul {
       padding-left: 40px;
     }
-    #key li, #key p {
+    .key li, .key p {
       color: black;
     }
     .object-explorer {
@@ -40,13 +40,31 @@ block content
   .row
     .large-12.columns
       h2 Output
+  .row
+    .large-12.columns
+      h3 AST
       #output
-      #key
+      .key
         p Key:
         ul
           li <code>\S</code> in the type means the property is only available after calling <code>ast.figure_out_scope()</code>
           li <code>*</code> in the type means the property is an <code>array</code> of that type
           li <code>?</code> in the type means the property is an <code>optional</code> property and may instead be <code>null</code>
+  .row
+    .large-6.columns
+      h3 Beautify
+      #output-pretty
+    .large-6.columns
+      h3 Minify
+      #output-ugly
+  .row
+    .large-12.columns
+      h2 Documentation
+      .key
+        p
+          | Full documentation can be found at 
+          a(href='http://lisperator.net/uglifyjs/') lisperator.net/uglifyjs
+          |  You will probably find the following information is also useful for understanding the internals though.
         p Not all nodes may be instantiated, here is a list of nodes which are not "abstract"
         ul.wrapped-list.row
           //.small-block-grid-3.large-block-grid-6
@@ -95,6 +113,25 @@ block content
           li VarDef
           li While
           li With
+        p You can instantiate any of the nodes by calling <code>new UglifyJS.AST_NodeType({properties})</code>:
+        .javascript.
+          function createNode(type, properties) {
+            return new UglifyJS['AST_' + type](properties)
+          }
+          var str = createNode('String', {value: 'foo'})
+        p If all you want to do is minify some code you can use:
+        .javascript.
+          var res = UglifyJS.minify('source code', {
+            warnings: false,  //pass `true` to display compressor warnings
+            fromString: true, //you will probably want to pass true but this defaults to false.
+                              //Pass `true` to minify a string of source code, rather than treating
+                              //the argument as a filename.
+            mangle: true,     //pass `false` to skip magling names
+            output: null,     //customise output options
+            compress: {}      //pass `false` to skip compression or pass an object to customise compression
+          })
+          //res.code contains minified source code
+          //res.map contains a source map
 
 block scripts
   script(src='/static/' + version + '/uglify.js')
