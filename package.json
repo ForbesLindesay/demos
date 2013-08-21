@@ -28,5 +28,9 @@
     "prerelease": "npm install && versionify && rimraf out",
     "release": "stop && mandate",
     "postrelease": "rimraf out"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ForbesLindesay/demos.git"
   }
 }
