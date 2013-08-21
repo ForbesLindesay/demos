@@ -22,6 +22,11 @@ block title
     .object-explorer {
       height: 20em;
     }
+    .wrapped-list li {
+      float: left;
+      list-style-type: none;
+      width: 9em;
+    }
 
 block content
   .row
@@ -42,6 +47,54 @@ block content
           li <code>\S</code> in the type means the property is only available after calling <code>ast.figure_out_scope()</code>
           li <code>*</code> in the type means the property is an <code>array</code> of that type
           li <code>?</code> in the type means the property is an <code>optional</code> property and may instead be <code>null</code>
+        p Not all nodes may be instantiated, here is a list of nodes which are not "abstract"
+        ul.wrapped-list.row
+          //.small-block-grid-3.large-block-grid-6
+          li Array
+          li Assign
+          li Binary
+          li BlockStatement
+          li Call
+          li Case
+          li Catch
+          li Conditional
+          li Const
+          li Debugger
+          li Default
+          li Directive
+          li Do
+          li Dot
+          li EmptyStatement
+          li False
+          li Finally
+          li For
+          li ForIn
+          li If
+          li LabeledStatement
+          li New
+          li Null
+          li Number
+          li Object
+          li ObjectGetter
+          li ObjectKeyVal
+          li ObjectSetter
+          li RegExp
+          li Return
+          li Seq
+          li SimpleStatement
+          li String
+          li Sub
+          li Switch
+          li Throw
+          li Token
+          li Toplevel
+          li True
+          li Try
+          li Undefined
+          li Var
+          li VarDef
+          li While
+          li With
 
 block scripts
   script(src='/static/' + version + '/uglify.js')
