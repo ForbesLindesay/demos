@@ -1,7 +1,7 @@
 {
   "name": "demos",
-  "version": "0.3.5",
-  "versionify": "0.3.5",
+  "version": "0.3.6",
+  "versionify": "0.3.6",
   "private": true,
   "dependencies": {
     "browserify-middleware": "~1.17.0",
