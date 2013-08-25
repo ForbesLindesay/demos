@@ -28,6 +28,7 @@ var outputUgly = new CodeMirror(document.getElementById('output-ugly'), {
   var jses = document.getElementsByClassName('javascript')
   for (var i = 0; i < jses.length; i++) {
     var val = jses[i].textContent
+    jses[i].innerHTML = ''
     new CodeMirror(jses[i], {
       mode: 'javascript',
       viewportMargin: Infinity,
