@@ -1,6 +1,6 @@
 var $ = document.getElementById.bind(document)
 var regexp = require('regexp')
-var ObjectExplorer = require('object-explorer')
+var DepthExplorer = require('./lib/depth-explorer')
 
 var input = $('input')
 var output = $('output')
@@ -29,7 +29,7 @@ function outputHTML(text) {
 
 function outputAST(ast) {
   output.innerHTML = ''
-  var oe = new ObjectExplorer(ast)
+  var oe = new DepthExplorer(ast, 2)
   oe.appendTo(output)
 }
 

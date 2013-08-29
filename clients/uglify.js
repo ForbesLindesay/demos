@@ -78,19 +78,19 @@ function ASTExplorer(ast) {
 ASTExplorer.prototype = Object.create(ObjectExplorer.prototype)
 ASTExplorer.prototype.constructor = ASTExplorer
 
-ASTExplorer.prototype.isInline = function (obj) {
+ASTExplorer.prototype.isInline = function (obj, depth) {
   if (obj instanceof UglifyJS.Dictionary && obj.size() === 0) {
     return true
   }
   return ObjectExplorer.prototype.isInline.call(this, obj)
 }
-ASTExplorer.prototype.getNodeForObject = function (obj) {
+ASTExplorer.prototype.getNodeForObject = function (obj, depth) {
   if (typeof obj.TYPE === 'string') {
     var docs = UglifyJS['AST_' + obj.TYPE]
     var outer = document.createElement('div')
     outer.appendChild(document.createTextNode('{'))
 
-    outer.appendChild(this.getNodeForProperty('TYPE', obj.TYPE, docs.documentation))
+    outer.appendChild(this.getNodeForProperty('TYPE', obj.TYPE, docs.documentation, depth + 1))
 
     for (var i = 0; i < docs.PROPS.length; i++) {
       var parent = docs
@@ -102,7 +102,7 @@ ASTExplorer.prototype.getNodeForObject = function (obj) {
           parent = parent.BASE
         }
       }
-      outer.appendChild(this.getNodeForProperty(docs.PROPS[i], obj[docs.PROPS[i]], propdoc))
+      outer.appendChild(this.getNodeForProperty(docs.PROPS[i], obj[docs.PROPS[i]], propdoc, depth + 1))
     }
 
     outer.appendChild(document.createTextNode('}'))
@@ -147,13 +147,13 @@ ASTExplorer.prototype.getNodeForObject = function (obj) {
 
     var self = this
     obj.each(function (val, key) {
-      outer.appendChild(self.getNodeForProperty(key, val))
+      outer.appendChild(self.getNodeForProperty(key, val, '', depth))
     })
 
     outer.appendChild(document.createTextNode('}'))
     return outer
   } else {
-    return ObjectExplorer.prototype.getNodeForObject.call(this, obj)
+    return ObjectExplorer.prototype.getNodeForObject.call(this, obj, depth)
   }
 }
 

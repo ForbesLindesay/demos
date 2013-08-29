@@ -1,9 +1,9 @@
-var CodeMirror = require('code-mirror')
 var toml = require('toml')
-var ObjectExplorer = require('object-explorer')
+var DepthExplorer = require('./lib/depth-explorer.js')
+var CodeMirror = require('./lib/cm-toml.js')
 
 var input = new CodeMirror(document.getElementById('input'), {
-  mode: 'text',
+  mode: 'toml',
   viewportMargin: Infinity,
   theme: 'solarized light editable',
   value: document.getElementById('input-content').innerHTML
@@ -31,10 +31,9 @@ function outputHTML(text) {
 
 function outputObject(res) {
   output.innerHTML = ''
-  var oe = new ObjectExplorer(res)
+  var oe = new DepthExplorer(res, 2)
   oe.appendTo(output)
 }
-
 
 
 input.on('change', update)
