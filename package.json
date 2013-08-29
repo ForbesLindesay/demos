@@ -13,7 +13,7 @@
     "rfile": "~1.0.0",
     "rfileify": "~1.2.0",
     "uglify-js": "2.4.0",
-    "htmlparser2": "3.2.3",
+    "htmlparser2": "3.2.4",
     "regexp": "1.0.0",
     "yieldify": "0.0.3",
     "toml": "1.0.4"
