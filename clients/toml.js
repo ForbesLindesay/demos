@@ -1,5 +1,5 @@
 var toml = require('toml')
-var DepthExplorer = require('./lib/depth-explorer.js')
+var ObjectExplorer = require('object-explorer')
 var CodeMirror = require('./lib/cm-toml.js')
 
 var input = new CodeMirror(document.getElementById('input'), {
@@ -29,10 +29,17 @@ function outputHTML(text) {
   output.innerHTML = '<pre class="cm-s-solarized">' + text + '</pre>'
 }
 
+var state = null
 function outputObject(res) {
   output.innerHTML = ''
-  var oe = new DepthExplorer(res, 2)
+  var oe = new ObjectExplorer(res, state)
+  if (state === null) {
+    oe.isExpanded = function (path) {
+      if (path.length < 2) return true
+    }
+  }
   oe.appendTo(output)
+  state = oe.state
 }
 
 

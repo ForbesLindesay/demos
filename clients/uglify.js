@@ -65,32 +65,36 @@ function outputHTML(text) {
   outputUgly.setValue('')
 }
 
+var state = null
 function outputAST(ast) {
+  var top = output.children.length ? output.children[0].scrollTop : 0
   ast.figure_out_scope()
   output.innerHTML = ''
-  var oe = new ASTExplorer(ast)
+  var oe = new ASTExplorer(ast, state)
   oe.appendTo(output)
+  state = oe.state
+  output.children[0].scrollTop = top
 }
 
-function ASTExplorer(ast) {
-  ObjectExplorer.call(this, ast)
+function ASTExplorer(ast, state) {
+  ObjectExplorer.call(this, ast, state)
 }
 ASTExplorer.prototype = Object.create(ObjectExplorer.prototype)
 ASTExplorer.prototype.constructor = ASTExplorer
 
-ASTExplorer.prototype.isInline = function (obj, depth) {
+ASTExplorer.prototype.isInline = function (obj, path) {
   if (obj instanceof UglifyJS.Dictionary && obj.size() === 0) {
     return true
   }
   return ObjectExplorer.prototype.isInline.call(this, obj)
 }
-ASTExplorer.prototype.getNodeForObject = function (obj, depth) {
+ASTExplorer.prototype.getNodeForObject = function (obj, path) {
   if (typeof obj.TYPE === 'string') {
     var docs = UglifyJS['AST_' + obj.TYPE]
     var outer = document.createElement('div')
     outer.appendChild(document.createTextNode('{'))
 
-    outer.appendChild(this.getNodeForProperty('TYPE', obj.TYPE, docs.documentation, depth + 1))
+    outer.appendChild(this.getNodeForProperty('TYPE', obj.TYPE, docs.documentation, path.concat('TYPE')))
 
     for (var i = 0; i < docs.PROPS.length; i++) {
       var parent = docs
@@ -102,7 +106,7 @@ ASTExplorer.prototype.getNodeForObject = function (obj, depth) {
           parent = parent.BASE
         }
       }
-      outer.appendChild(this.getNodeForProperty(docs.PROPS[i], obj[docs.PROPS[i]], propdoc, depth + 1))
+      outer.appendChild(this.getNodeForProperty(docs.PROPS[i], obj[docs.PROPS[i]], propdoc, path.concat(docs.PROPS[i])))
     }
 
     outer.appendChild(document.createTextNode('}'))
@@ -147,13 +151,13 @@ ASTExplorer.prototype.getNodeForObject = function (obj, depth) {
 
     var self = this
     obj.each(function (val, key) {
-      outer.appendChild(self.getNodeForProperty(key, val, '', depth))
+      outer.appendChild(self.getNodeForProperty(key, val, '', path.concat(key)))
     })
 
     outer.appendChild(document.createTextNode('}'))
     return outer
   } else {
-    return ObjectExplorer.prototype.getNodeForObject.call(this, obj, depth)
+    return ObjectExplorer.prototype.getNodeForObject.call(this, obj, path)
   }
 }
 

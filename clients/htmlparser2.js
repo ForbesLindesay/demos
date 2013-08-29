@@ -4,7 +4,7 @@ var CodeMirror = require('code-mirror/mode/htmlmixed');
 var htmlparser = require('htmlparser2');
 var rfile = require('rfile');
 var sample = rfile('./example.html');
-var DepthExplorer = require('./lib/depth-explorer')
+var ObjectExplorer = require('object-explorer')
 
 var input = new CodeMirror(document.getElementById('input'), {
   mode: 'htmlmixed',
@@ -15,7 +15,7 @@ var input = new CodeMirror(document.getElementById('input'), {
 var output = document.getElementById('output')
 
 input.on('change', update);
-update();
+var state = null
 function update() {
   var s;
   try {
@@ -26,7 +26,9 @@ function update() {
     return;
   }
   output.innerHTML = '';
-  (new DepthExplorer(s, 3)).appendTo(output);
+  var explorer = new ObjectExplorer(s, state)
+  explorer.appendTo(output);
+  state = explorer.state
 }
 
 function parse(html) {
@@ -35,3 +37,5 @@ function parse(html) {
   parser.parseComplete(html);
   return handler.dom;
 }
+
+update();

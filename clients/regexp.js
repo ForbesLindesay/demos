@@ -1,6 +1,6 @@
 var $ = document.getElementById.bind(document)
 var regexp = require('regexp')
-var DepthExplorer = require('./lib/depth-explorer')
+var ObjectExplorer = require('object-explorer')
 
 var input = $('input')
 var output = $('output')
@@ -27,10 +27,12 @@ function outputHTML(text) {
   output.innerHTML = '<pre class="cm-s-solarized">' + text + '</pre>'
 }
 
+var state = null
 function outputAST(ast) {
   output.innerHTML = ''
-  var oe = new DepthExplorer(ast, 2)
+  var oe = new ObjectExplorer(ast, state)
   oe.appendTo(output)
+  state = oe.state
 }
 
 update()

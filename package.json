@@ -9,7 +9,7 @@
     "express": "~3.3.1",
     "jade": "~0.35.0",
     "transform": "~1.0.3",
-    "object-explorer": "0.1.0",
+    "object-explorer": "~0.2.0",
     "rfile": "~1.0.0",
     "rfileify": "~1.2.0",
     "uglify-js": "2.4.0",
