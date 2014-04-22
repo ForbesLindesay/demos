@@ -1,6 +1,6 @@
 # Demos
 
-[![Dependency Status](https://gemnasium.com/ForbesLindesay/demos.png)](https://gemnasium.com/ForbesLindesay/demos)
+[![Dependency Status](https://img.shields.io/gemnasium/ForbesLindesay/demos.svg)](https://gemnasium.com/ForbesLindesay/demos)
 
 http://demos.forbeslindesay.co.uk
 
