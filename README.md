@@ -1,5 +1,7 @@
 # Demos
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ForbesLindesay/demos.svg)](https://greenkeeper.io/)
+
 [![Dependency Status](https://img.shields.io/david/ForbesLindesay/demos.svg)](https://david-dm.org/ForbesLindesay/demos)
 
 http://demos.forbeslindesay.co.uk
